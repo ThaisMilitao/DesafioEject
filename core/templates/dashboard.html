@@ -1,0 +1,195 @@
+{% extends 'nav.html' %}
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Mazer Admin Dashboard</title>
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static '/css/bootstrap.css'%}">
+
+    <link rel="stylesheet" href="{% static '/vendors/iconly/bold.css'%}">
+
+    <link rel="stylesheet" href="{% static '/vendors/perfect-scrollbar/perfect-scrollbar.css'%}">
+    <link rel="stylesheet" href="{% static '/vendors/bootstrap-icons/bootstrap-icons.css'%}">
+    <link rel="stylesheet" href="{% static '/css/app.css'%}">
+    <link rel="shortcut icon" href="{% static '/images/favicon.svg'%}" type="image/x-icon">
+</head>
+
+<body>
+    <div id="app">
+        {% block content %}        
+        <!-- CORPO DA PÁGINA -->
+        <div id="main">
+            <header class="mb-3">
+                <a href="#" class="burger-btn d-block d-xl-none">
+                    <i class="bi bi-justify fs-3"></i>
+                </a>
+            </header>
+
+            <div class="page-heading">
+                <h3>Dashboard - Usuário</h3>
+            </div>
+            <div class="page-content">
+                <section class="row">
+                    <div class="col-12 col-lg-9">
+                        <div class="row">
+
+                            <div class="col-6 col-lg-4 col-md-6">
+                                <div class="card">
+                                    <div class="card-body px-3 py-4-5">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="stats-icon purple">
+                                                    <i class="iconly-boldShow"></i>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <h6 class="text-muted font-semibold">Produtos</h6>
+                                                <h6 class="font-extrabold mb-0">{{tamanho}}</h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-6 col-lg-4 col-md-6">
+                                <div class="card">
+                                    <div class="card-body px-3 py-4-5">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="stats-icon green">
+                                                    <i class="iconly-boldPlay"></i>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <h6 class="text-muted font-semibold">Último post</h6>
+                                                <h6 class="font-extrabold mb-0">{{ultimoPost.data|date:'d/m/Y'}}</h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- BARRA DE PESQUISA -->
+                        <div class="row">
+                            <form  method="get">
+                                <div class="card p-3 d-flex flex-row">
+                                    <input class="form-control mr-sm-2" type="search" style="margin-left: 20px;" placeholder="Digite aqui o que deseja consultar" aria-label="Search" name="search">
+
+                                    <button class="btn btn-outline-primary my-2 my-sm-0 mt-3 " type="submit">Consultar</button>
+                                </div>
+                            </form>  
+                        </div>
+                        <!-- FIM BARRA DE PESQUISA -->
+                        {% if p%}
+                        {%else%}
+                            <p>Produto não encontrado!!!</p>
+                        {%endif%}
+                        <div class="row">
+                            <!-- QUADROS -->
+                            {%for p in produtos%}
+                            <div class="col col-lg-4">
+                                <div class="card"> 
+                                    <div class="m-2">
+                                        <h4 class="mb-0">{{p.nome}}</h4>
+                                        <p class="text-justify">{{p.categoria}}</p>
+                                        <img src="{{p.imagem.url}}" class="img-fluid rounded" alt="Responsive image">
+                                        <div class= "mt-2">
+                                            <p class="text-justify mb-0">{{p.data|date:'d/m/Y'}}</p>
+                                        </div>
+                                        <div class= "mt-2">
+                                            <p class="text-justify">{{p.descricao}}</p>
+                                        </div>
+                                        <div class= "mt-2 btn-primary active text-center rounded">R$ {{p.preco}}</div>
+                                        <hr>
+                                        <div class= "mt-2">{{p.email}}</div>
+                                        <div class= "mt-2">
+                                            <p class="text-right" style="text-align: right;">{{p.codigo}}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %} 
+                            <!-- FIM QUADROS -->
+                        </div>
+                        <p class="text-center mb-0">
+                            <span class="text-primary"><strong>{{ produtos.number }}</strong></span> de <span class="text-primary"><strong>{{ produtos.paginator.num_pages }}</strong></span>
+                        </p>
+                
+                        <!--  PAGINAÇÃO -->
+                        <!--  Se o número de páginas for menor ou igual a 10 deverá aparecer todas as páginas na tela -->
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination justify-content-center">
+                                {% if produtos.has_previous %}
+                                <li class="page-item" aria-current="page">
+                                   <a class="page-link" href="?page={{ produtos.previous_page_number }}" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                {%endif%}
+                                {% for i in produtos.paginator.page_range %}
+                                {%if 10 >= i%}
+                                <li class="page-item"><a class="page-link" href="?page={{i}}">{{i}}</a></li>
+                                {%endif%}
+                                {%endfor%}
+                                {% if produtos.has_next %}
+                                <li class="page-item">     
+                                    <a class="page-link" href="?page={{ produtos.next_page_number }}" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                                {%endif%}
+                            </ul>
+                        </nav>
+                        <!--  FIM PAGINAÇÃO -->
+                    </div>
+
+                    <!-- USUÁRIOS -->
+                    <div class="col-12 col-lg-3">
+
+                        <!-- USUÁRIO LOGADO-->
+                        {% if user.is_authenticated %}
+                        <div class="card">
+                            <div class="card-body py-4">
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar avatar-xl">
+                                        <img src="{{user.usuario.imagem.url}}" alt="Face 1">
+                                    </div>
+                                    <div class="ms-3 name">
+                                        <h5 class="font-bold">{{user.get_username }}</h5>
+                                        <h6 class="text-muted mb-0">{{user.email}}</h6>
+                                    </div>
+                                </div>
+                                <div class="w-100 mt-3">
+                                    <a href="{% url 'editar-usuario' user.id %}">
+                                        <div class= "btn-success active text-center rounded">Editar</div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {%endif%}
+                        <!-- FIM USUÁRIO LOGADO -->
+
+                    <!-- FIM USUÁRIOS -->
+                </section>
+            </div>
+            {% endblock %}        
+        </div>
+        <!-- FIM CORPO DA PÁGINA -->
+    </div>
+    <script src="{% static '/vendors/perfect-scrollbar/perfect-scrollbar.min.js' %}"></script>
+    <script src="{% static '/js/bootstrap.bundle.min.js' %}"></script>
+
+    <script src="{% static '/vendors/apexcharts/apexcharts.js' %}"></script>
+    <script src="{% static '/js/pages/dashboard.js' %}"></script>
+
+    <script src="{% static '/js/main.js' %}"></script>
+</body>
+
+</html>

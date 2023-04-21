@@ -1,0 +1,112 @@
+{% extends 'nav.html' %}
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input - Mazer Admin Dashboard</title>
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static '/css/bootstrap.css'%}">
+
+    <link rel="stylesheet" href="{% static '/vendors/perfect-scrollbar/perfect-scrollbar.css'%}">
+    <link rel="stylesheet" href="{% static '/vendors/bootstrap-icons/bootstrap-icons.css'%}">
+    <link rel="stylesheet" href="{% static '/css/app.css'%}">
+    <link rel="shortcut icon" href="{% static '/images/favicon.svg'%}" type="image/x-icon">
+
+
+
+</head>
+
+<body>
+    <div id="app">
+        {% block content %}        
+        <!-- CORPO DA PÁGINA -->
+        <div id="main">
+            <header class="mb-3">
+                <a href="#" class="burger-btn d-block d-xl-none">
+                    <i class="bi bi-justify fs-3"></i>
+                </a>
+            </header>
+
+            <div class="page-heading">
+                <div class="page-title">
+                    <div class="row">
+                        <div class="col-12 col-md-6 order-md-1 order-last">
+                            <h3>Editar {{user.user.username}}</h3>
+                        </div>
+                        <div class="col-12 col-md-6 order-md-2 order-first">
+                            <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="{%url 'dashboard' %}">Dashboard</a></li>
+                                    <li class="breadcrumb-item active" aria-current="page">Editar {{user.user.username}}</li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+                <section class="section">
+                    <div class="card">
+
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <form enctype="multipart/form-data" action="{%url 'editar-usuario' user.id%}" method="post">{% csrf_token %}
+                                        <div class="form-group">
+                                            <label for="nome_produto"><h6>Nome Completo</h6></label>
+                                            <input type="text" class="form-control mb-3 w-100" id="nome_produto"
+                                                placeholder="Digite o nome do produto" value="{{user.user.first_name}}" name="fullName">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="email"><h6>Email</h6></label>
+                                            <input type="email" class="form-control mb-3 w-100" id="email"
+                                                placeholder="Digite um email para contato" value="{{user.user.email}}" name="email">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="senha"><h6>Senha</h6></label>
+                                            <input type="password" class="form-control mb-3 w-100" id="senha"
+                                                placeholder="Password" name ="password" required>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="conf_senha"><h6>Confirmar Senha</h6></label>
+                                            <input type="password" class="form-control mb-3 w-100" id="conf_senha"
+                                                placeholder="Confirm Password" name ="password2" required>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="imagem_produto"><h6>Escolha uma foto de perfil</h6></label>
+                                            <input type="file" class="form-control mb-3 w-100" id="imagem_produto" value="{{user.usuario.imagem}}" name="imagem" required>
+                                        </div>
+                                        {% if messages %}
+                                            {% for m in messages %}
+                                                {{ m }}
+                                            {% endfor %}
+                                        {% endif %}
+                                        <div class="col-md-6 mt-5">
+                                            <button class=" btn btn-success my-2 my-sm-0 mt-3" type="submit">Editar usuario</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <!-- FIM CORPO DA PÁGINA -->
+            {%endblock%}
+        </div>
+        <!-- FIM CORPO DA PÁGINA -->
+    </div>
+    <script src="assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+
+    <script src="assets/js/main.js"></script>
+</body>
+
+</html>
