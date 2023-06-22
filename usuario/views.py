@@ -10,7 +10,6 @@ from django.contrib.auth.decorators import login_required
 import re
 
 # Create your views here.
-
 def login(request):
     if request.user.is_authenticated:
         return redirect('dashboard')
@@ -19,12 +18,13 @@ def login(request):
         username = request.POST.get('username')
         password = request.POST.get('password')
         remember = request.POST.get('remember')
-        user = auth.authenticate(username=username, password=password)
+        user = auth.authenticate(username=username, password=password)      
+        # Verifica se o usuario existe
         if user is not None:
             auth.login(request, user=user) 
-            if remember is None:
+            # Se o remember is none desloga despois que fecha a janela
+            if remember is None: 
                 request.session.set_expiry(0)
-            
             return redirect('dashboard')
         messages.error(request, 'Username e/ou senha inválido.')  
     return render(request, 'index.html')
@@ -35,29 +35,30 @@ def logout(request):
     return redirect('login')
 
 def signin(request):
-    if request.method == "GET":
-        return render(request, 'auth-register.html')
-    else:
+    if request.method == "POST":
         email = request.POST.get('email')
         name = request.POST.get('fullName')
         username = request.POST.get('username') 
         password = request.POST.get('password')
         password2 = request.POST.get('password2') 
         
+        # buscar por username no BD, para verificar se ele existe
+        # se ele nao existe
         if not Usuario.objects.filter(user__username=username).exists():
             if validarSenha(password):
                 messages.error(request, 'Requisitos:\n*Minimo 8 caracteres\n*Pelo menos 2 letras minuscula\n*Pelo menos 2 letras Maiuscula\n*Pelo menos 2 numeros\n*Pelo menos 1 caractere especial')
                 return render(request, 'auth-register.html')
-            if (password and password2) and password != password2:
+            
+            elif (password and password2) and password != password2:
                 messages.error(request, 'As senhas digitadas não coincidem')
                 return render(request, 'auth-register.html')
         
-            else:
-                user = User.objects.create_user(email=email, first_name = name, username=username, password=password)
-                user.save()
-                Usuario(user=user).save()
-
-        return redirect('login')
+            user = User.objects.create_user(email=email, first_name = name, username=username, password=password)
+            user.save()
+            Usuario(user=user).save()
+            return redirect('login')
+        
+    return render(request, 'auth-register.html')
 
 @login_required(login_url='login')
 def editar_usuario(request, id):
@@ -84,16 +85,13 @@ def editar_usuario(request, id):
             messages.error(request, 'Requisitos:\n*Minimo 8 caracteres\n*Pelo menos 2 letras minuscula\n*Pelo menos 2 letras Maiuscula\n*Pelo menos 2 numeros\n*Pelo menos 1 caractere especial')
             return render(request, 'editar-usuario.html', context)
             
-        if (password and password2) and password != password2:
+        elif (password and password2) and password != password2:
             messages.error(request, 'As senhas digitadas não coincidem')
             return render(request, 'editar-usuario.html', context)
         
-        else: 
-            user.save()
-            usuario.save()
-            messages.success(request, 'Dados alterados com sucesso!')
-
-
+        user.save()
+        usuario.save()
+        messages.success(request, 'Dados alterados com sucesso!')
     
     return render(request, 'editar-usuario.html', context)
 
